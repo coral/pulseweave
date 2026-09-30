@@ -6,7 +6,6 @@ description = "Synchronous streaming bar, beat, and tatum analysis for mono audi
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/coral/pulseweave"
 documentation = "https://docs.rs/pulseweave"
-readme = "README.md"
 keywords = ["audio", "beat-tracking", "tempo", "rhythm", "dsp"]
 categories = ["multimedia::audio", "algorithms"]
 include = ["src/**", "tests/**", "examples/**", "Cargo.toml", "Cargo.lock", "README.md", "LICENSE-MIT", "LICENSE-APACHE"]
