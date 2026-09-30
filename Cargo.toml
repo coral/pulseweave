@@ -1,0 +1,13 @@
+[package]
+name = "pulseweave"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+thiserror = "2"
+rtrb = "0.3.2"
+rubato = "0.16.2"
+rustfft = "6"
+fearless_simd = "1"
+fearless_simd_macros = "0.1"
+
