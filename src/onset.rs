@@ -169,15 +169,13 @@ impl OnsetAnalyzer {
         let energy: [f64; BANDS] = std::array::from_fn(|band| {
             let (low, center, high) = self.edges[band];
             let mut sum = 0.0;
-            for bin in low..=center {
-                let weighted = (bin - low) as f64 / (center - low) as f64
-                    * self.spectrum[bin].norm()
-                    / (N as f64).sqrt();
+            for (offset, value) in self.spectrum[low..=center].iter().enumerate() {
+                let weighted =
+                    offset as f64 / (center - low) as f64 * value.norm() / (N as f64).sqrt();
                 sum += weighted * weighted;
             }
-            for bin in center + 1..=high {
-                let weighted = (1.0 - (bin - center) as f64 / (high - center) as f64)
-                    * self.spectrum[bin].norm()
+            for (offset, value) in self.spectrum[center + 1..=high].iter().enumerate() {
+                let weighted = (1.0 - (offset + 1) as f64 / (high - center) as f64) * value.norm()
                     / (N as f64).sqrt();
                 sum += weighted * weighted;
             }

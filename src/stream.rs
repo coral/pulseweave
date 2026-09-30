@@ -2,7 +2,8 @@
 use crate::onset::{AccentFrame, OnsetAnalyzer, SAMPLE_RATE};
 use crate::tracker::{Tracker, TrackerUpdate};
 use rtrb::{Consumer, Producer, RingBuffer};
-use rubato::{FftFixedIn, Resampler};
+use rubato::audioadapter_buffers::direct::InterleavedSlice;
+use rubato::{Fft, FixedSync, Resampler};
 
 /// Failure to construct an audio stream or queue.
 #[derive(Debug, thiserror::Error)]
@@ -23,7 +24,7 @@ const CHUNK: usize = 512;
 
 /// Mono input adapter. All resampler buffers are allocated at construction.
 struct AudioAdapter {
-    resampler: Option<FftFixedIn<f64>>,
+    resampler: Option<Fft<f64>>,
     input: [f64; CHUNK],
     filled: usize,
     output: Vec<f64>,
@@ -38,7 +39,13 @@ impl AudioAdapter {
         let resampler = if sample_rate == SAMPLE_RATE {
             None
         } else {
-            Some(FftFixedIn::new(sample_rate, SAMPLE_RATE, CHUNK, 2, 1)?)
+            Some(Fft::new(
+                sample_rate,
+                SAMPLE_RATE,
+                CHUNK,
+                1,
+                FixedSync::Input,
+            )?)
         };
         let output = vec![0.; resampler.as_ref().map_or(0, Resampler::output_frames_max)];
         Ok(Self {
@@ -74,10 +81,15 @@ impl AudioAdapter {
                 continue;
             }
             if let Some(r) = &mut self.resampler {
+                let input = InterleavedSlice::new(&self.input, 1, CHUNK)
+                    .expect("fixed mono input buffer must remain valid");
+                let output_frames = self.output.len();
+                let mut output = InterleavedSlice::new_mut(&mut self.output, 1, output_frames)
+                    .expect("preallocated mono output buffer must remain valid");
                 // Fixed channel count, input length and preallocated output size
                 // make buffer validation an invariant established by construction.
                 let (_, count) = r
-                    .process_into_buffer(&[&self.input[..]], &mut [&mut self.output[..]], None)
+                    .process_into_buffer(&input, &mut output, None)
                     .expect("fixed resampler buffers must remain valid");
                 emit(&self.output[..count]);
             } else {

@@ -2,12 +2,19 @@
 name = "pulseweave"
 version = "0.1.0"
 edition = "2024"
+description = "Synchronous streaming bar, beat, and tatum analysis for mono audio"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/coral/pulseweave"
+documentation = "https://docs.rs/pulseweave"
+readme = "README.md"
+keywords = ["audio", "beat-tracking", "tempo", "rhythm", "dsp"]
+categories = ["multimedia::audio", "algorithms"]
+include = ["src/**", "tests/**", "examples/**", "Cargo.toml", "Cargo.lock", "README.md", "LICENSE-MIT", "LICENSE-APACHE"]
 
 [dependencies]
-thiserror = "2"
-rtrb = "0.3.2"
-rubato = "0.16.2"
-rustfft = "6"
-fearless_simd = "1"
-fearless_simd_macros = "0.1"
-
+thiserror = "2.0.21"
+rtrb = "0.4.0"
+rubato = "5.0.0"
+rustfft = "6.4.1"
+fearless_simd = "1.0.0"
+fearless_simd_macros = "0.1.0"

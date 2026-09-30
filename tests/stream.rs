@@ -2,7 +2,7 @@ use pulseweave::stream::{FeatureStream, audio_channel};
 
 #[test]
 fn arbitrary_callback_sizes_are_equivalent() {
-    for rate in [44100, 48000, 96000] {
+    for rate in [8000, 44100, 48000, 96000, 192000] {
         let input: Vec<f32> = (0..rate).map(|i| (i as f32 * 0.13).sin()).collect();
         let run = |chunk| {
             let mut stream = FeatureStream::new(rate).unwrap();
@@ -39,7 +39,7 @@ fn silence_and_nonfinite_input_remain_finite() {
 #[test]
 fn meter_partition_reset_and_silence() {
     use pulseweave::stream::MeterStream;
-    for rate in [44100, 48000, 96000] {
+    for rate in [8000, 44100, 48000, 96000, 192000] {
         let input: Vec<f32> = (0..rate * 2).map(|i| (i as f32 * 0.13).sin()).collect();
         let mut stream = MeterStream::new(rate).unwrap();
         let mut run = |chunk| {
